@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitud de Diseño</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.15);
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent3: #00d4aa;
+    --text: #f0eeff;
+    --text-muted: rgba(240,238,255,0.5);
+    --text-dim: rgba(240,238,255,0.25);
+    --danger: #ff4757;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(108,99,255,0.12), transparent 70%);
+    top: -200px; left: -200px;
+  }
+  .glow-orb-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,107,157,0.08), transparent 70%);
+    bottom: -100px; right: -100px;
+  }
+
+  /* Nav */
+  nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    background: rgba(10,10,15,0.8);
+    position: sticky;
+    top: 0;
+  }
+
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-brand-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-link:hover { color: var(--text); background: var(--surface); border-color: var(--border); }
+  .nav-link.active { color: var(--text); background: var(--surface2); border-color: var(--border-hover); }
+
+  /* Main */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .page-header {
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .page-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(108,99,255,0.12);
+    border: 1px solid rgba(108,99,255,0.25);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .page-title span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-subtitle {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* Form card */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    animation: fadeUp 0.5s 0.1s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    opacity: 0.6;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Form grid */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  label .req {
+    color: var(--accent2);
+    margin-left: 2px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  textarea,
+  select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.65rem 0.85rem;
+    width: 100%;
+    transition: all 0.2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+    background: rgba(108,99,255,0.04);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--text-dim); }
+
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.6;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(240,238,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 2rem;
+    cursor: pointer;
+  }
+
+  select option { background: #1a1a26; }
+
+  /* Priority badge indicator */
+  .priority-preview {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .priority-chip {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+
+  .p-urgente { background: rgba(255,71,87,0.15); color: #ff4757; border: 1px solid rgba(255,71,87,0.3); }
+  .p-prioritario { background: rgba(255,165,0,0.15); color: #ffa500; border: 1px solid rgba(255,165,0,0.3); }
+  .p-normal { background: rgba(255,214,0,0.15); color: #ffd700; border: 1px solid rgba(255,214,0,0.3); }
+
+  /* Divider */
+  .form-divider {
+    height: 1px;
+    background: var(--border);
+    grid-column: 1 / -1;
+    margin: 0.25rem 0;
+  }
+
+  /* Actions */
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.65rem 1.5rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover {
+    color: var(--danger);
+    border-color: rgba(255,71,87,0.4);
+    background: rgba(255,71,87,0.08);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(108,99,255,0.45);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  /* Success toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface2);
+    border: 1px solid rgba(0,212,170,0.3);
+    color: var(--accent3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .toast-icon {
+    width: 20px; height: 20px;
+    background: rgba(0,212,170,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  /* Counter */
+  .char-count {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-card { padding: 1.5rem; }
+    nav { padding: 1rem 1.25rem; }
+    .nav-brand-text { display: none; }
+    .form-actions { flex-direction: column-reverse; }
+    .btn { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-brand-dot"></div>
+    <span class="nav-brand-text" style="font-family:'Syne',sans-serif; font-weight:800; font-size:0.95rem; letter-spacing:-0.02em;">Design<span style="color:var(--accent)">Hub</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link active">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Nueva Solicitud
+    </a>
+    <a href="estado.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      Estado de Pedidos
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="page-tag">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+      Nuevo pedido
+    </div>
+    <h1 class="page-title">Solicitud de <span>Diseño</span></h1>
+    <p class="page-subtitle">Completá el formulario con los detalles del trabajo. Una vez enviado, aparecerá en el panel de Estado de Pedidos.</p>
+  </div>
+
+  <div class="form-card">
+    <form id="solicitudForm" novalidate>
+      <div class="form-grid">
+
+        <!-- Fecha de Pedido -->
+        <div class="form-group">
+          <label for="fechaPedido">Fecha de Pedido <span class="req">*</span></label>
+          <input type="date" id="fechaPedido" name="fechaPedido" required>
+        </div>
+
+        <!-- Solicita -->
+        <div class="form-group">
+          <label for="solicita">Solicita <span class="req">*</span></label>
+          <input type="text" id="solicita" name="solicita" placeholder="Nombre de quien solicita" required>
+        </div>
+
+        <!-- Unidad de Negocio -->
+        <div class="form-group">
+          <label for="unidad">Unidad de Negocio <span class="req">*</span></label>
+          <input type="text" id="unidad" name="unidad" placeholder="Ej: Marketing, Ventas...">
+        </div>
+
+        <!-- Tipo de Diseño -->
+        <div class="form-group">
+          <label for="tipoDiseno">Tipo de Diseño <span class="req">*</span></label>
+          <input type="text" id="tipoDiseno" name="tipoDiseno" placeholder="Ej: Flyer, Banner, Branding...">
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Detalle del Diseño -->
+        <div class="form-group full">
+          <label for="detalle">Detalle del Diseño <span class="req">*</span></label>
+          <textarea id="detalle" name="detalle" placeholder="Describí con detalle qué necesitás: dimensiones, colores, textos, referencias visuales, etc." required oninput="updateCharCount(this)"></textarea>
+          <div class="char-count" id="charCount">0 caracteres</div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Fecha Asignada -->
+        <div class="form-group">
+          <label for="fechaAsignada">Fecha Asignada</label>
+          <input type="date" id="fechaAsignada" name="fechaAsignada">
+        </div>
+
+        <!-- Prioridad -->
+        <div class="form-group">
+          <label for="prioridad">Prioridad <span class="req">*</span></label>
+          <select id="prioridad" name="prioridad" required onchange="updatePriorityPreview(this.value)">
+            <option value="" disabled selected>Seleccioná la prioridad</option>
+            <option value="Urgente">🔴 Urgente</option>
+            <option value="Prioritario">🟠 Prioritario</option>
+            <option value="Normal">🟡 Normal</option>
+          </select>
+          <div class="priority-preview" id="priorityPreview" style="opacity:0; transition:opacity 0.3s;">
+            <span class="priority-chip p-urgente">Urgente</span>
+            <span class="priority-chip p-prioritario">Prioritario</span>
+            <span class="priority-chip p-normal">Normal</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" onclick="clearForm()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Borrar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Enviar Solicitud
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="toast-icon">✓</div>
+  Solicitud enviada · Redirigiendo...
+</div>
+
+<script>
+  // Set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fechaPedido').value = today;
+
+  function updateCharCount(el) {
+    document.getElementById('charCount').textContent = el.value.length + ' caracteres';
+  }
+
+  function updatePriorityPreview(val) {
+    const preview = document.getElementById('priorityPreview');
+    preview.style.opacity = val ? '1' : '0';
+  }
+
+  function clearForm() {
+    if (confirm('¿Querés borrar todos los campos?')) {
+      document.getElementById('solicitudForm').reset();
+      document.getElementById('fechaPedido').value = today;
+      document.getElementById('charCount').textContent = '0 caracteres';
+      document.getElementById('priorityPreview').style.opacity = '0';
+    }
+  }
+
+  document.getElementById('solicitudForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const fields = ['fechaPedido','solicita','unidad','tipoDiseno','detalle','prioridad'];
+    let valid = true;
+
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.style.borderColor = 'var(--danger)';
+        el.style.boxShadow = '0 0 0 3px rgba(255,71,87,0.15)';
+        valid = false;
+        el.addEventListener('input', function() {
+          this.style.borderColor = '';
+          this.style.boxShadow = '';
+        }, { once: true });
+      }
+    });
+
+    if (!valid) return;
+
+    // Build record
+    const record = {
+      id: Date.now(),
+      fechaPedido: document.getElementById('fechaPedido').value,
+      solicita: document.getElementById('solicita').value.trim(),
+      unidad: document.getElementById('unidad').value.trim(),
+      tipoDiseno: document.getElementById('tipoDiseno').value.trim(),
+      detalle: document.getElementById('detalle').value.trim(),
+      fechaAsignada: document.getElementById('fechaAsignada').value,
+      prioridad: document.getElementById('prioridad').value,
+      estado: 'Sin Iniciar',
+      link: ''
+    };
+
+    // Save to localStorage
+    const existing = JSON.parse(localStorage.getItem('solicitudes') || '[]');
+    existing.push(record);
+    localStorage.setItem('solicitudes', JSON.stringify(existing));
+
+    // Show toast & redirect
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => window.location.href = 'estado.html', 1800);
+  });
+</script>
+</body>
+</html>

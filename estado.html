@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estado de Pedidos — DesignHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.15);
+    --accent: #6c63ff;
+    --accent2: #ff6b9d;
+    --accent3: #00d4aa;
+    --text: #f0eeff;
+    --text-muted: rgba(240,238,255,0.5);
+    --text-dim: rgba(240,238,255,0.25);
+    --danger: #ff4757;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(108,99,255,0.1), transparent 70%);
+    top: 0; right: 0;
+  }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    background: rgba(10,10,15,0.85);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-brand-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .nav-links { display: flex; gap: 4px; }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-link:hover { color: var(--text); background: var(--surface); border-color: var(--border); }
+  .nav-link.active { color: var(--text); background: var(--surface2); border-color: var(--border-hover); }
+
+  main {
+    position: relative;
+    z-index: 1;
+    padding: 2.5rem 1.5rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.2);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .counter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(108,99,255,0.2);
+    color: var(--accent);
+    border: 1px solid rgba(108,99,255,0.35);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    margin-left: 10px;
+    vertical-align: middle;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(108,99,255,0.3);
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-new:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108,99,255,0.4); }
+
+  .table-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeUp 0.4s 0.1s ease both;
+    position: relative;
+  }
+
+  .table-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+    z-index: 1;
+  }
+
+  .table-scroll { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 1000px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  tbody tr.terminado { background: rgba(0,212,170,0.05) !important; }
+  tbody tr.terminado:hover { background: rgba(0,212,170,0.08) !important; }
+  tbody tr.terminado td { color: rgba(0,212,170,0.85); }
+  tbody tr.terminado .badge { filter: brightness(0.7) saturate(0.5); }
+
+  td {
+    padding: 0.85rem 1rem;
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  td.date-cell {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    color: var(--text-dim);
+  }
+
+  td.solicita-cell {
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  td.unidad-cell, td.tipo-cell { white-space: nowrap; }
+
+  .detalle-cell { max-width: 200px; }
+
+  .detalle-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .detalle-preview:hover { color: var(--text); }
+
+  .detalle-more {
+    font-size: 0.73rem;
+    color: var(--accent);
+    cursor: pointer;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .detalle-more:hover { opacity: 1; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-urgente { background: rgba(255,71,87,0.15); color: #ff6b7a; border: 1px solid rgba(255,71,87,0.3); }
+  .badge-prioritario { background: rgba(255,165,0,0.15); color: #ffa500; border: 1px solid rgba(255,165,0,0.3); }
+  .badge-normal { background: rgba(255,214,0,0.15); color: #e8c000; border: 1px solid rgba(255,214,0,0.3); }
+
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .estado-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    padding: 5px 26px 5px 8px;
+    width: 145px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(240,238,255,0.25)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: border-color 0.2s;
+  }
+
+  .estado-select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(108,99,255,0.2); }
+  .estado-select option { background: #1a1a26; }
+
+  .link-cell { min-width: 155px; }
+
+  .link-input-wrap { display: flex; align-items: center; gap: 5px; }
+
+  .link-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 5px 8px;
+    width: 110px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .link-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(108,99,255,0.15); color: var(--text); }
+
+  .link-open-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px; height: 27px;
+    border-radius: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .link-open-btn:hover { background: rgba(108,99,255,0.15); border-color: rgba(108,99,255,0.4); color: var(--accent); }
+
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    margin: 0 auto;
+  }
+
+  .delete-btn:hover { background: rgba(255,71,87,0.12); border-color: rgba(255,71,87,0.3); color: var(--danger); }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .empty-icon {
+    width: 64px; height: 64px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.75rem;
+    opacity: 0.6;
+  }
+
+  .empty-title { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .empty-text { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border-hover);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 560px;
+    width: 100%;
+    position: relative;
+    animation: modalIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 16px 16px 0 0;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+  }
+
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); }
+  .modal-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .modal-content { font-size: 0.9rem; line-height: 1.7; color: var(--text-muted); white-space: pre-wrap; }
+
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { color: var(--text); border-color: var(--border-hover); }
+
+  /* Confirm */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .confirm-overlay.open { display: flex; }
+
+  .confirm-dialog {
+    background: var(--surface);
+    border: 1px solid rgba(255,71,87,0.2);
+    border-radius: 14px;
+    padding: 1.75rem;
+    max-width: 380px;
+    width: 90%;
+    text-align: center;
+    animation: modalIn 0.2s ease both;
+  }
+
+  .confirm-icon {
+    width: 48px; height: 48px;
+    background: rgba(255,71,87,0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    color: var(--danger);
+  }
+
+  .confirm-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .confirm-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
+  .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+
+  .btn-cancel {
+    padding: 0.55rem 1.25rem; border-radius: 8px; background: transparent;
+    border: 1px solid var(--border); color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; cursor: pointer; transition: all 0.2s;
+  }
+
+  .btn-cancel:hover { background: var(--surface2); color: var(--text); }
+
+  .btn-delete {
+    padding: 0.55rem 1.25rem; border-radius: 8px; background: rgba(255,71,87,0.15);
+    border: 1px solid rgba(255,71,87,0.35); color: var(--danger);
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+
+  .btn-delete:hover { background: rgba(255,71,87,0.25); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface2);
+    border: 1px solid rgba(255,71,87,0.2);
+    color: var(--danger);
+    padding: 0.65rem 1.25rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    z-index: 300;
+    transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1);
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 700px) {
+    nav { padding: 1rem 1.25rem; }
+    main { padding: 1.5rem 0.75rem 3rem; }
+    .page-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb glow-orb-1"></div>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-brand-dot"></div>
+    <span>Design<span style="color:var(--accent)">Hub</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Nueva Solicitud
+    </a>
+    <a href="estado.html" class="nav-link active">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      Estado de Pedidos
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-tag">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+        Panel de control
+      </div>
+      <h1 class="page-title">Estado de Pedidos <span class="counter-badge" id="rowCount">0</span></h1>
+    </div>
+    <a href="index.html" class="btn-new">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nueva Solicitud
+    </a>
+  </div>
+
+  <div id="tableContainer">
+    <div class="table-wrapper">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha Pedido</th>
+              <th>Solicita</th>
+              <th>Unidad</th>
+              <th>Tipo de Diseño</th>
+              <th>Detalle</th>
+              <th>Fecha Asignada</th>
+              <th>Prioridad</th>
+              <th>Estado</th>
+              <th>Link</th>
+              <th style="text-align:center; width:44px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">📋</div>
+    <div class="empty-title">Sin solicitudes aún</div>
+    <p class="empty-text">Las solicitudes enviadas desde el formulario aparecerán acá.</p>
+    <a href="index.html" class="btn-new" style="display:inline-flex; text-decoration:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Crear primera solicitud
+    </a>
+  </div>
+</main>
+
+<!-- Modal detalle -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-label">Detalle completo del diseño</div>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Confirm delete -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </div>
+    <div class="confirm-title">¿Eliminar solicitud?</div>
+    <p class="confirm-text">Esta acción no se puede deshacer. La solicitud será eliminada permanentemente.</p>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-delete" onclick="confirmDelete()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+  Solicitud eliminada
+</div>
+
+<script>
+  let pendingDeleteId = null;
+  const ESTADOS = ['Sin Iniciar','En Proceso','En corrección','Corregido','TERMINADO'];
+
+  function getSolicitudes() {
+    return JSON.parse(localStorage.getItem('solicitudes') || '[]');
+  }
+
+  function saveSolicitudes(data) {
+    localStorage.setItem('solicitudes', JSON.stringify(data));
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    const parts = d.split('-');
+    if (parts.length !== 3) return d;
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
+  }
+
+  function priorityBadge(p) {
+    const map = { 'Urgente': 'urgente', 'Prioritario': 'prioritario', 'Normal': 'normal' };
+    const cls = map[p] || 'normal';
+    return '<span class="badge badge-' + cls + '"><span class="badge-dot"></span>' + esc(p) + '</span>';
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function renderTable() {
+    const data = getSolicitudes();
+    const tbody = document.getElementById('tbody');
+    const emptyState = document.getElementById('emptyState');
+    const tableContainer = document.getElementById('tableContainer');
+    document.getElementById('rowCount').textContent = data.length;
+
+    if (data.length === 0) {
+      tableContainer.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    tableContainer.style.display = 'block';
+    emptyState.style.display = 'none';
+    tbody.innerHTML = '';
+
+    data.forEach(function(item) {
+      const tr = document.createElement('tr');
+      if (item.estado === 'TERMINADO') tr.classList.add('terminado');
+      tr.dataset.id = item.id;
+
+      const detalleLong = item.detalle && item.detalle.length > 160;
+      const linkVal = item.link || '';
+      const hasLink = linkVal.startsWith('http');
+
+      const estadoOptions = ESTADOS.map(function(s) {
+        return '<option value="' + esc(s) + '"' + (item.estado === s ? ' selected' : '') + '>' + esc(s) + '</option>';
+      }).join('');
+
+      const detalleEsc = esc(item.detalle || '—');
+      const detalleData = (item.detalle || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+
+      tr.innerHTML =
+        '<td class="date-cell">' + formatDate(item.fechaPedido) + '</td>' +
+        '<td class="solicita-cell">' + esc(item.solicita) + '</td>' +
+        '<td class="unidad-cell">' + esc(item.unidad) + '</td>' +
+        '<td class="tipo-cell">' + esc(item.tipoDiseno) + '</td>' +
+        '<td class="detalle-cell">' +
+          '<div class="detalle-preview" onclick="openModal(\'' + esc(item.solicita).replace(/'/g,"\\'") + '\', \'' + detalleData + '\')">' + detalleEsc + '</div>' +
+          (detalleLong ? '<button class="detalle-more" onclick="openModal(\'' + esc(item.solicita).replace(/'/g,"\\'") + '\', \'' + detalleData + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Ver completo</button>' : '') +
+        '</td>' +
+        '<td class="date-cell">' + formatDate(item.fechaAsignada) + '</td>' +
+        '<td>' + priorityBadge(item.prioridad) + '</td>' +
+        '<td><select class="estado-select" onchange="updateEstado(' + item.id + ', this.value)">' + estadoOptions + '</select></td>' +
+        '<td class="link-cell"><div class="link-input-wrap">' +
+          '<input type="url" class="link-input" placeholder="https://..." value="' + esc(linkVal) + '" onchange="updateLink(' + item.id + ', this.value)" title="Pegá una URL externa">' +
+          '<a class="link-open-btn" id="linkBtn-' + item.id + '" href="' + (hasLink ? esc(linkVal) : '#') + '" target="_blank" rel="noopener" style="' + (!hasLink ? 'opacity:0.3;pointer-events:none;' : '') + '" title="Abrir link"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>' +
+        '</div></td>' +
+        '<td><button class="delete-btn" onclick="askDelete(' + item.id + ')" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></td>';
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function updateEstado(id, estado) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.estado = estado;
+    saveSolicitudes(data);
+    const tr = document.querySelector('tr[data-id="' + id + '"]');
+    if (tr) {
+      if (estado === 'TERMINADO') tr.classList.add('terminado');
+      else tr.classList.remove('terminado');
+    }
+  }
+
+  function updateLink(id, link) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.link = link.trim();
+    saveSolicitudes(data);
+    const btn = document.getElementById('linkBtn-' + id);
+    if (btn) {
+      const valid = link.trim().startsWith('http');
+      btn.href = valid ? link.trim() : '#';
+      btn.style.opacity = valid ? '1' : '0.3';
+      btn.style.pointerEvents = valid ? '' : 'none';
+    }
+  }
+
+  function askDelete(id) {
+    pendingDeleteId = id;
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
+
+  function closeConfirm() {
+    pendingDeleteId = null;
+    document.getElementById('confirmOverlay').classList.remove('open');
+  }
+
+  function confirmDelete() {
+    if (!pendingDeleteId) return;
+    const data = getSolicitudes().filter(function(x) { return x.id != pendingDeleteId; });
+    saveSolicitudes(data);
+    pendingDeleteId = null;
+    document.getElementById('confirmOverlay').classList.remove('open');
+    renderTable();
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  function openModal(title, content) {
+    document.getElementById('modalTitle').textContent = 'Solicita: ' + title;
+    document.getElementById('modalContent').textContent = content || '—';
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function closeModalIfOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeModal(); closeConfirm(); }
+  });
+
+  renderTable();
+</script>
+</body>
+</html>
