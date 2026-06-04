@@ -396,6 +396,32 @@
 
   .delete-btn:hover { background: rgba(255,71,87,0.12); border-color: rgba(255,71,87,0.3); color: var(--danger); }
 
+  .correcciones-cell { min-width: 180px; max-width: 220px; }
+
+  .correcciones-textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+    width: 100%;
+    min-height: 70px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.5;
+    transition: all 0.2s;
+  }
+
+  .correcciones-textarea:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(255,107,157,0.15);
+    color: var(--text);
+  }
+
+  .correcciones-textarea::placeholder { color: var(--text-dim); font-style: italic; }
+
   .empty-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -617,6 +643,7 @@
               <th>Fecha Asignada</th>
               <th>Prioridad</th>
               <th>Estado</th>
+              <th>Correcciones</th>
               <th>Link</th>
               <th style="text-align:center; width:44px">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
@@ -752,6 +779,7 @@
         '<td class="date-cell">' + formatDate(item.fechaAsignada) + '</td>' +
         '<td>' + priorityBadge(item.prioridad) + '</td>' +
         '<td><select class="estado-select" onchange="updateEstado(' + item.id + ', this.value)">' + estadoOptions + '</select></td>' +
+        '<td class="correcciones-cell"><textarea class="correcciones-textarea" placeholder="Anotá las correcciones..." onchange="updateCorrecciones(' + item.id + ', this.value)">' + esc(item.correcciones || '') + '</textarea></td>' +
         '<td class="link-cell"><div class="link-input-wrap">' +
           '<input type="url" class="link-input" placeholder="https://..." value="' + esc(linkVal) + '" onchange="updateLink(' + item.id + ', this.value)" title="Pegá una URL externa">' +
           '<a class="link-open-btn" id="linkBtn-' + item.id + '" href="' + (hasLink ? esc(linkVal) : '#') + '" target="_blank" rel="noopener" style="' + (!hasLink ? 'opacity:0.3;pointer-events:none;' : '') + '" title="Abrir link"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>' +
@@ -773,6 +801,14 @@
       if (estado === 'TERMINADO') tr.classList.add('terminado');
       else tr.classList.remove('terminado');
     }
+  }
+
+  function updateCorrecciones(id, texto) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.correcciones = texto;
+    saveSolicitudes(data);
   }
 
   function updateLink(id, link) {
