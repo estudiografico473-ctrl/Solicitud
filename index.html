@@ -12,14 +12,14 @@
     --bg: #0a0a0f;
     --surface: #12121a;
     --surface2: #1a1a26;
-    --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(255,255,255,0.15);
+    --border: rgba(255,255,255,0.12);
+    --border-hover: rgba(255,255,255,0.22);
     --accent: #6c63ff;
     --accent2: #ff6b9d;
     --accent3: #00d4aa;
     --text: #f0eeff;
-    --text-muted: rgba(240,238,255,0.5);
-    --text-dim: rgba(240,238,255,0.25);
+    --text-muted: rgba(240,238,255,0.82);
+    --text-dim: rgba(240,238,255,0.55);
     --danger: #ff4757;
     --radius: 12px;
     --radius-sm: 8px;
@@ -170,7 +170,7 @@
 
   .page-subtitle {
     margin-top: 0.75rem;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
     line-height: 1.6;
   }
@@ -216,8 +216,8 @@
   .form-group.full { grid-column: 1 / -1; }
 
   label {
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 0.875rem;
+    font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -237,8 +237,8 @@
     border-radius: var(--radius-sm);
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    padding: 0.65rem 0.85rem;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
     width: 100%;
     transition: all 0.2s;
     outline: none;
@@ -257,7 +257,7 @@
     background: rgba(108,99,255,0.04);
   }
 
-  input::placeholder, textarea::placeholder { color: var(--text-dim); }
+  input::placeholder, textarea::placeholder { color: rgba(240,238,255,0.35); }
 
   textarea {
     resize: vertical;
