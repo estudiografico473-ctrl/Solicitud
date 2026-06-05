@@ -3,588 +3,319 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solicitud de Diseño</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a26;
-    --border: rgba(255,255,255,0.12);
-    --border-hover: rgba(255,255,255,0.22);
-    --accent: #6c63ff;
-    --accent2: #ff6b9d;
-    --accent3: #00d4aa;
-    --text: #f0eeff;
-    --text-muted: rgba(240,238,255,0.82);
-    --text-dim: rgba(240,238,255,0.55);
-    --danger: #ff4757;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Animated background grid */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .glow-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .glow-orb-1 {
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(108,99,255,0.12), transparent 70%);
-    top: -200px; left: -200px;
-  }
-  .glow-orb-2 {
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(255,107,157,0.08), transparent 70%);
-    bottom: -100px; right: -100px;
-  }
-
-  /* Nav */
-  nav {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 2.5rem;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-    background: rgba(10,10,15,0.8);
-    position: sticky;
-    top: 0;
-  }
-
-  .nav-brand {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .nav-brand-dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.8); }
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 4px;
-  }
-
-  .nav-link {
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: all 0.2s;
-    border: 1px solid transparent;
-  }
-
-  .nav-link:hover { color: var(--text); background: var(--surface); border-color: var(--border); }
-  .nav-link.active { color: var(--text); background: var(--surface2); border-color: var(--border-hover); }
-
-  /* Main */
-  main {
-    position: relative;
-    z-index: 1;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
-  }
-
-  /* Header */
-  .page-header {
-    margin-bottom: 2.5rem;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  .page-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: rgba(108,99,255,0.12);
-    border: 1px solid rgba(108,99,255,0.25);
-    padding: 4px 12px;
-    border-radius: 100px;
-    margin-bottom: 1rem;
-  }
-
-  .page-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    color: var(--text);
-  }
-
-  .page-title span {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-subtitle {
-    margin-top: 0.75rem;
-    font-size: 1.05rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  /* Form card */
-  .form-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2.5rem;
-    animation: fadeUp 0.5s 0.1s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .form-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
-    opacity: 0.6;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Form grid */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .form-group.full { grid-column: 1 / -1; }
-
-  label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-
-  label .req {
-    color: var(--accent2);
-    margin-left: 2px;
-  }
-
-  input[type="text"],
-  input[type="date"],
-  textarea,
-  select {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-    width: 100%;
-    transition: all 0.2s;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.5);
-    cursor: pointer;
-  }
-
-  input:focus, textarea:focus, select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
-    background: rgba(108,99,255,0.04);
-  }
-
-  input::placeholder, textarea::placeholder { color: rgba(240,238,255,0.35); }
-
-  textarea {
-    resize: vertical;
-    min-height: 110px;
-    line-height: 1.6;
-  }
-
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(240,238,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 2rem;
-    cursor: pointer;
-  }
-
-  select option { background: #1a1a26; }
-
-  /* Priority badge indicator */
-  .priority-preview {
-    display: flex;
-    gap: 8px;
-    margin-top: 6px;
-  }
-
-  .priority-chip {
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 100px;
-    font-weight: 500;
-  }
-
-  .p-urgente { background: rgba(255,71,87,0.15); color: #ff4757; border: 1px solid rgba(255,71,87,0.3); }
-  .p-prioritario { background: rgba(255,165,0,0.15); color: #ffa500; border: 1px solid rgba(255,165,0,0.3); }
-  .p-normal { background: rgba(255,214,0,0.15); color: #ffd700; border: 1px solid rgba(255,214,0,0.3); }
-
-  /* Divider */
-  .form-divider {
-    height: 1px;
-    background: var(--border);
-    grid-column: 1 / -1;
-    margin: 0.25rem 0;
-  }
-
-  /* Actions */
-  .form-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.65rem 1.5rem;
-    border-radius: var(--radius-sm);
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.01em;
-  }
-
-  .btn-ghost {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-  }
-
-  .btn-ghost:hover {
-    color: var(--danger);
-    border-color: rgba(255,71,87,0.4);
-    background: rgba(255,71,87,0.08);
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #8b5cf6);
-    color: white;
-    box-shadow: 0 4px 20px rgba(108,99,255,0.3);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 28px rgba(108,99,255,0.45);
-  }
-
-  .btn-primary:active { transform: translateY(0); }
-
-  /* Success toast */
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--surface2);
-    border: 1px solid rgba(0,212,170,0.3);
-    color: var(--accent3);
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    z-index: 100;
-    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  .toast-icon {
-    width: 20px; height: 20px;
-    background: rgba(0,212,170,0.2);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-  }
-
-  /* Counter */
-  .char-count {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    text-align: right;
-    margin-top: 2px;
-  }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .form-card { padding: 1.5rem; }
-    nav { padding: 1rem 1.25rem; }
-    .nav-brand-text { display: none; }
-    .form-actions { flex-direction: column-reverse; }
-    .btn { justify-content: center; }
-  }
-</style>
+<title>DG•473 — Estado de Pedidos</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
 <div class="glow-orb glow-orb-1"></div>
-<div class="glow-orb glow-orb-2"></div>
 
 <nav>
-  <div class="nav-brand">
+  <a href="index.html" class="nav-brand">
+    <img src="favicon.png" alt="DG473" class="nav-favicon">
     <div class="nav-brand-dot"></div>
-    <span class="nav-brand-text" style="font-family:'Syne',sans-serif; font-weight:800; font-size:0.95rem; letter-spacing:-0.02em;">Design<span style="color:var(--accent)">Hub</span></span>
-  </div>
+    DG•473
+  </a>
   <div class="nav-links">
     <a href="index.html" class="nav-link active">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Nueva Solicitud
-    </a>
-    <a href="estado.html" class="nav-link">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
       Estado de Pedidos
+    </a>
+    <a href="solicitud.html" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nueva Solicitud
     </a>
   </div>
 </nav>
 
-<main>
-  <div class="page-header">
-    <div class="page-tag">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
-      Nuevo pedido
+<main class="estado-main">
+  <div class="estado-page-header page-header">
+    <div>
+      <h1 class="page-title estado-page-title">
+        Estado de Pedidos <span class="counter-badge" id="rowCount">0</span>
+      </h1>
     </div>
-    <h1 class="page-title">Solicitud de <span>Diseño</span></h1>
-    <p class="page-subtitle">Completá el formulario con los detalles del trabajo. Una vez enviado, aparecerá en el panel de Estado de Pedidos.</p>
+    <a href="solicitud.html" class="btn-new">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nueva Solicitud
+    </a>
   </div>
 
-  <div class="form-card">
-    <form id="solicitudForm" novalidate>
-      <div class="form-grid">
-
-        <!-- Fecha de Pedido -->
-        <div class="form-group">
-          <label for="fechaPedido">Fecha de Pedido <span class="req">*</span></label>
-          <input type="date" id="fechaPedido" name="fechaPedido" required>
-        </div>
-
-        <!-- Solicita -->
-        <div class="form-group">
-          <label for="solicita">Solicita <span class="req">*</span></label>
-          <input type="text" id="solicita" name="solicita" placeholder="Nombre de quien solicita" required>
-        </div>
-
-        <!-- Unidad de Negocio -->
-        <div class="form-group">
-          <label for="unidad">Unidad de Negocio <span class="req">*</span></label>
-          <input type="text" id="unidad" name="unidad" placeholder="Ej: Marketing, Ventas...">
-        </div>
-
-        <!-- Tipo de Diseño -->
-        <div class="form-group">
-          <label for="tipoDiseno">Tipo de Diseño <span class="req">*</span></label>
-          <input type="text" id="tipoDiseno" name="tipoDiseno" placeholder="Ej: Flyer, Banner, Branding...">
-        </div>
-
-        <div class="form-divider"></div>
-
-        <!-- Detalle del Diseño -->
-        <div class="form-group full">
-          <label for="detalle">Detalle del Diseño <span class="req">*</span></label>
-          <textarea id="detalle" name="detalle" placeholder="Describí con detalle qué necesitás: dimensiones, colores, textos, referencias visuales, etc." required oninput="updateCharCount(this)"></textarea>
-          <div class="char-count" id="charCount">0 caracteres</div>
-        </div>
-
-        <div class="form-divider"></div>
-
-        <!-- Fecha Asignada -->
-        <div class="form-group">
-          <label for="fechaAsignada">Fecha Asignada</label>
-          <input type="date" id="fechaAsignada" name="fechaAsignada">
-        </div>
-
-        <!-- Prioridad -->
-        <div class="form-group">
-          <label for="prioridad">Prioridad <span class="req">*</span></label>
-          <select id="prioridad" name="prioridad" required onchange="updatePriorityPreview(this.value)">
-            <option value="" disabled selected>Seleccioná la prioridad</option>
-            <option value="Urgente">🔴 Urgente</option>
-            <option value="Prioritario">🟠 Prioritario</option>
-            <option value="Normal">🟡 Normal</option>
-          </select>
-          <div class="priority-preview" id="priorityPreview" style="opacity:0; transition:opacity 0.3s;">
-            <span class="priority-chip p-urgente">Urgente</span>
-            <span class="priority-chip p-prioritario">Prioritario</span>
-            <span class="priority-chip p-normal">Normal</span>
-          </div>
-        </div>
-
+  <div id="tableContainer">
+    <div class="table-wrapper">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Pedido / Solicita</th>
+              <th>Unidad</th>
+              <th>Diseño</th>
+              <th>Detalle</th>
+              <th>Fecha Asignada</th>
+              <th>Prioridad</th>
+              <th>Estado</th>
+              <th>Correcciones</th>
+              <th>Link</th>
+              <th style="text-align:center; width:44px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
       </div>
+    </div>
+  </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn btn-ghost" onclick="clearForm()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-          Borrar
-        </button>
-        <button type="submit" class="btn btn-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-          Enviar Solicitud
-        </button>
-      </div>
-    </form>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">📋</div>
+    <div class="empty-title">Sin solicitudes aún</div>
+    <p class="empty-text">Las solicitudes enviadas desde el formulario aparecerán acá.</p>
+    <a href="solicitud.html" class="btn-new" style="display:inline-flex; text-decoration:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Crear primera solicitud
+    </a>
   </div>
 </main>
 
+<!-- Modal detalle -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-label">Detalle completo del diseño</div>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Confirm delete -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </div>
+    <div class="confirm-title">¿Eliminar solicitud?</div>
+    <p class="confirm-text">Esta acción no se puede deshacer. La solicitud será eliminada permanentemente.</p>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-delete" onclick="confirmDelete()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
-<div class="toast" id="toast">
-  <div class="toast-icon">✓</div>
-  Solicitud enviada · Redirigiendo...
+<div class="toast toast-danger" id="toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+  Solicitud eliminada
 </div>
 
 <script>
-  // Set today's date as default
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('fechaPedido').value = today;
+  let pendingDeleteId = null;
+  const ESTADOS    = ['Sin Iniciar','Iniciado','Feedback','FINALIZADO'];
+  const PRIORIDADES = ['Urgente','Intermedio','Normal'];
 
-  function updateCharCount(el) {
-    document.getElementById('charCount').textContent = el.value.length + ' caracteres';
+  function getSolicitudes() {
+    return JSON.parse(localStorage.getItem('solicitudes') || '[]');
   }
 
-  function updatePriorityPreview(val) {
-    const preview = document.getElementById('priorityPreview');
-    preview.style.opacity = val ? '1' : '0';
+  function saveSolicitudes(data) {
+    localStorage.setItem('solicitudes', JSON.stringify(data));
   }
 
-  function clearForm() {
-    if (confirm('¿Querés borrar todos los campos?')) {
-      document.getElementById('solicitudForm').reset();
-      document.getElementById('fechaPedido').value = today;
-      document.getElementById('charCount').textContent = '0 caracteres';
-      document.getElementById('priorityPreview').style.opacity = '0';
+  function formatDate(d) {
+    if (!d) return '—';
+    const parts = d.split('-');
+    if (parts.length !== 3) return d;
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
+  }
+
+  function priorityBadge(p) {
+    const map = { 'Urgente': 'urgente', 'Intermedio': 'intermedio', 'Normal': 'normal' };
+    const cls = map[p] || 'normal';
+    return '<span class="badge badge-' + cls + '"><span class="badge-dot"></span>' + esc(p) + '</span>';
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function renderTable() {
+    const data = getSolicitudes();
+    const tbody = document.getElementById('tbody');
+    const emptyState = document.getElementById('emptyState');
+    const tableContainer = document.getElementById('tableContainer');
+    document.getElementById('rowCount').textContent = data.length;
+
+    if (data.length === 0) {
+      tableContainer.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    tableContainer.style.display = 'block';
+    emptyState.style.display = 'none';
+    tbody.innerHTML = '';
+
+    data.forEach(function(item) {
+      const tr = document.createElement('tr');
+      if (item.estado === 'FINALIZADO') tr.classList.add('finalizado');
+      tr.dataset.id = item.id;
+
+      const detalleLong = item.detalle && item.detalle.length > 150;
+      const linkVal = item.link || '';
+      const hasLink = linkVal.startsWith('http');
+
+      const estadoOptions = ESTADOS.map(function(s) {
+        return '<option value="' + esc(s) + '"' + (item.estado === s ? ' selected' : '') + '>' + esc(s) + '</option>';
+      }).join('');
+
+      const prioOptions = PRIORIDADES.map(function(s) {
+        return '<option value="' + esc(s) + '"' + (item.prioridad === s ? ' selected' : '') + '>' + esc(s) + '</option>';
+      }).join('');
+
+      const detalleEsc = esc(item.detalle || '—');
+      const detalleData = (item.detalle || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+      const solicEsc = esc(item.solicita).replace(/'/g,"\\'");
+
+      // Map old priority names to new ones
+      const prioVal = item.prioridad === 'Prioritario' ? 'Intermedio' : (item.prioridad || 'Normal');
+
+      tr.innerHTML =
+        /* Fecha + Solicita combinados */
+        '<td class="td-fecha-solicita">' +
+          '<span class="td-fecha">' + formatDate(item.fechaPedido) + '</span>' +
+          '<span class="td-solicita">' + esc(item.solicita) + '</span>' +
+        '</td>' +
+        '<td class="unidad-cell">' + esc(item.unidad) + '</td>' +
+        '<td class="tipo-cell">' + esc(item.tipoDiseno) + '</td>' +
+        /* Detalle */
+        '<td class="detalle-cell">' +
+          '<div class="detalle-preview" onclick="openModal(\'' + solicEsc + '\', \'' + detalleData + '\')">' + detalleEsc + '</div>' +
+          (detalleLong ? '<button class="detalle-more" onclick="openModal(\'' + solicEsc + '\', \'' + detalleData + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Ver completo</button>' : '') +
+        '</td>' +
+        /* Fecha Asignada editable */
+        '<td><input type="date" class="fecha-asignada-input" value="' + esc(item.fechaAsignada || '') + '" onchange="updateFechaAsignada(' + item.id + ', this.value)" title="Editar fecha asignada"></td>' +
+        /* Prioridad: badge + select */
+        '<td class="prioridad-cell">' +
+          '<div class="prioridad-wrap">' +
+            '<div id="pBadge-' + item.id + '">' + priorityBadge(prioVal) + '</div>' +
+            '<select class="prioridad-select" onchange="updatePrioridad(' + item.id + ', this.value)">' + prioOptions + '</select>' +
+          '</div>' +
+        '</td>' +
+        /* Estado */
+        '<td><select class="estado-select" onchange="updateEstado(' + item.id + ', this.value)">' + estadoOptions + '</select></td>' +
+        /* Correcciones */
+        '<td class="correcciones-cell"><textarea class="correcciones-textarea" placeholder="Anotá las correcciones..." onchange="updateCorrecciones(' + item.id + ', this.value)">' + esc(item.correcciones || '') + '</textarea></td>' +
+        /* Link */
+        '<td class="link-cell"><div class="link-input-wrap">' +
+          '<input type="url" class="link-input" placeholder="https://..." value="' + esc(linkVal) + '" onchange="updateLink(' + item.id + ', this.value)">' +
+          '<a class="link-open-btn" id="linkBtn-' + item.id + '" href="' + (hasLink ? esc(linkVal) : '#') + '" target="_blank" rel="noopener" style="' + (!hasLink ? 'opacity:0.3;pointer-events:none;' : '') + '" title="Abrir link"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>' +
+        '</div></td>' +
+        /* Delete */
+        '<td><button class="delete-btn" onclick="askDelete(' + item.id + ')" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></td>';
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function updateEstado(id, estado) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.estado = estado;
+    saveSolicitudes(data);
+    const tr = document.querySelector('tr[data-id="' + id + '"]');
+    if (tr) {
+      if (estado === 'FINALIZADO') tr.classList.add('finalizado');
+      else tr.classList.remove('finalizado');
     }
   }
 
-  document.getElementById('solicitudForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+  function updatePrioridad(id, prioridad) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.prioridad = prioridad;
+    saveSolicitudes(data);
+    const badge = document.getElementById('pBadge-' + id);
+    if (badge) badge.innerHTML = priorityBadge(prioridad);
+  }
 
-    const fields = ['fechaPedido','solicita','unidad','tipoDiseno','detalle','prioridad'];
-    let valid = true;
+  function updateFechaAsignada(id, fecha) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.fechaAsignada = fecha;
+    saveSolicitudes(data);
+  }
 
-    fields.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el.value.trim()) {
-        el.style.borderColor = 'var(--danger)';
-        el.style.boxShadow = '0 0 0 3px rgba(255,71,87,0.15)';
-        valid = false;
-        el.addEventListener('input', function() {
-          this.style.borderColor = '';
-          this.style.boxShadow = '';
-        }, { once: true });
-      }
-    });
+  function updateCorrecciones(id, texto) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.correcciones = texto;
+    saveSolicitudes(data);
+  }
 
-    if (!valid) return;
+  function updateLink(id, link) {
+    const data = getSolicitudes();
+    const item = data.find(function(x) { return x.id == id; });
+    if (!item) return;
+    item.link = link.trim();
+    saveSolicitudes(data);
+    const btn = document.getElementById('linkBtn-' + id);
+    if (btn) {
+      const valid = link.trim().startsWith('http');
+      btn.href = valid ? link.trim() : '#';
+      btn.style.opacity = valid ? '1' : '0.3';
+      btn.style.pointerEvents = valid ? '' : 'none';
+    }
+  }
 
-    // Build record
-    const record = {
-      id: Date.now(),
-      fechaPedido: document.getElementById('fechaPedido').value,
-      solicita: document.getElementById('solicita').value.trim(),
-      unidad: document.getElementById('unidad').value.trim(),
-      tipoDiseno: document.getElementById('tipoDiseno').value.trim(),
-      detalle: document.getElementById('detalle').value.trim(),
-      fechaAsignada: document.getElementById('fechaAsignada').value,
-      prioridad: document.getElementById('prioridad').value,
-      estado: 'Sin Iniciar',
-      link: ''
-    };
+  function askDelete(id) {
+    pendingDeleteId = id;
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
 
-    // Save to localStorage
-    const existing = JSON.parse(localStorage.getItem('solicitudes') || '[]');
-    existing.push(record);
-    localStorage.setItem('solicitudes', JSON.stringify(existing));
+  function closeConfirm() {
+    pendingDeleteId = null;
+    document.getElementById('confirmOverlay').classList.remove('open');
+  }
 
-    // Show toast & redirect
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => window.location.href = 'estado.html', 1800);
+  function confirmDelete() {
+    if (!pendingDeleteId) return;
+    const data = getSolicitudes().filter(function(x) { return x.id != pendingDeleteId; });
+    saveSolicitudes(data);
+    pendingDeleteId = null;
+    document.getElementById('confirmOverlay').classList.remove('open');
+    renderTable();
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  function openModal(title, content) {
+    document.getElementById('modalTitle').textContent = 'Solicita: ' + title;
+    document.getElementById('modalContent').textContent = content || '—';
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  function closeModalIfOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeModal(); closeConfirm(); }
   });
+
+  renderTable();
 </script>
 </body>
 </html>
